@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+
+<title>bug viewer</title>
+
+<meta charset="utf8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<body classlist="{resolution} {status}">
+
+  <header>
+    <div id="loginstuff">
+      <form id="login" onsubmit="login()">
+        <input type="email" placeholder="email" id="loginusername">
+        <input type="password" placeholder="password" id="loginpassword">
+        <input type="submit">
+      </form>
+      <span id="whoyouare"></span>
+    </div>
+  </header>
+
+  <h1 class="toexpand">{alias} Bug {id} - {summary}</h1>
+
+  <section id="metaandcomments">
+    <section id="meta" class="loading">
+      <section class="status" caption="status">
+        <p class="toexpand resolution" classlist="{resolution} {status}">{resolution}: {status}</p>
+        <dl class="written">
+          <dt>Written by:</dt>
+          <dd class="toexpand" email="{creator.name}">{creator.real_name}</dd>
+        </dl>
+        <dl class="assigned">
+          <dt>Assigned to:</dt>
+          <dd class="toexpand" email="{assigned_to.name}">{assigned_to.real_name}</dd>
+        </dl>
+        <dl class="qacontact">
+          <dt>QA Contact:</dt>
+          <dd class="toexpand">{qa_contact.name}</dd>
+        </dl>
+        <dl class="target">
+          <dt>target:</dt>
+          <dd class="toexpand"><span>{priority}</span><span>{severity}</span><span>{target_milestone}</span></dd>
+        </dl>
+      </section>
+      <section class="flags" caption="flags"></section>
+      <section class="dependencies" caption="dependencies">
+        <dl class="dependson">
+          <dt>Depends on:</dt>
+          <dd></dd>
+        </dl>
+        <dl class="blockers">
+          <dt>Blocks:</dt>
+          <dd></dd>
+        </dl>
+      </section>
+      <section class="affects" caption="affects">
+        <dl class="product">
+          <dt>Product:</dt>
+          <dd class="toexpand">{product}</dd>
+        </dl>
+
+        <dl class="platform">
+          <dt>Platform:</dt>
+          <dd class="toexpand">{platform}</dd>
+        </dl>
+      </section>
+      <section class="followers" caption="followers"></section>
+    </section>
+    <section id="comments" class="loading"></section>
+  </section>
+
+  <div class="throbber"></div>
+</body>
+
+<link rel="stylesheet" href="bugviewer.css">
+<script type="application/javascript;version=1.8" src="bugviewer.js"></script>

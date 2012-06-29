@@ -1,0 +1,150 @@
+@import url(http://fonts.googleapis.com/css?family=Varela);
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300);
+body {font-family: 'Open Sans', sans-serif; color: #768990}
+* { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;}
+p {margin:0}
+h1 {color: #213135;clear:both}
+
+/* Header */
+
+body.connected #login { display: none; }
+body:not(.connected) #whoyouare { display: none; }
+#loginstuff { float: right; }
+
+/* corp */
+
+#metaandcomments {
+  font-size: 0;
+}
+
+#meta {
+  width: 30%;
+}
+
+#comments {
+  width: 70%;
+}
+
+#meta, #comments {
+  vertical-align: top;
+  font-size: 13px;
+  border: 1px solid #EEE;
+  display: inline-block;
+}
+
+
+/* meta */
+
+#meta {
+  background: #F8F7D8;
+  margin-right: -1px;
+  padding: 20px;
+}
+
+#meta > section {
+  padding-left: 15px;
+}
+
+#meta > section:before {
+  text-transform: uppercase;
+  content: attr(caption);
+  color: #213135;
+  margin-left: -15px;
+}
+
+.resolution {
+  color: #213135;
+  float: right;
+  margin: 0 2px 0 0;
+}
+
+#meta > section > dl > dd {
+  color: #213135;
+}
+
+.target > dd > span:not(:last-of-type):after {
+  content: "|";
+  margin: 0 5px;
+  color: #CCC;
+}
+
+/* comments */
+
+.comment > .date {
+  float: right;
+}
+.comment:nth-child(even) {
+  background-color: #F8F8F8;
+}
+
+.comment {
+  border-bottom: 1px solid #EEE;
+  padding: 20px;
+  width: 100%;
+  overflow: auto;
+}
+.comment > pre {
+  color: #213135;
+}
+
+/* misc */
+
+.loading {
+  pointer-events: none;
+  opacity: 0.5;
+}
+.loading:before {
+  content: "";
+  height: 7px; width: 7px;
+  border-radius: 50%;
+  background: black;
+  display: inline-block;
+  -moz-animation-duration: 0.6s;
+  -moz-animation-name: boomboom;
+  -moz-animation-direction: alternate;
+  -moz-animation-iteration-count: infinite;
+  -moz-animation-timing-function: linear;
+}
+@-moz-keyframes boomboom {to { -moz-transform: scale(0.5) rotate(0.1deg); }}
+
+
+
+.followers > p > a:not(:last-of-type):after,
+.dependencies > dl > dd > a:not(:last-of-type):after {
+  content: " | ";
+  color: #CCC;
+}
+
+.avatar {
+  background-size: 24px 24px;
+  line-height: 24px;
+  background-repeat: no-repeat;
+  padding-left: 30px;
+}
+
+.followers > ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.followers > ul > li {
+  margin-bottom: 5px;
+}
+
+/* Small view */
+
+@media (max-width: 800px) {
+  #meta, #comments {
+    display: block;
+    width: 100%;
+  }
+  .followers > ul > li {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    overflow: hidden;
+    vertical-align: top;
+  }
+}
+
+
