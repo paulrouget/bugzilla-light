@@ -66,12 +66,17 @@ header {text-align:right; padding: 3px}
   background: #EEE;
   border-radius: 100px;
   float: right;
-  border: 1px solid #EEE;
 }
 
-.resolution[resolution=RESOLVEDFIXED] {
-  background: #E3FEDF;
-}
+.resolution[resolution=RESOLVEDFIXED] { background: #E3FEDF; }
+.resolution[resolution=RESOLVEDWONTFIX] { background: #000;color:white}
+
+.resolution[resolution=NEW]:after {content: "NEW";}
+.resolution[resolution=UNCONFIRMED]:after {content: "UNCO";}
+.resolution[resolution=RESOLVEDWONTFIX]:after {content: "WONTFIX"; font-size: 12px}
+.resolution[resolution=RESOLVEDFIXED]:after {content: "FIXED";}
+.resolution[resolution=VERIFIEDFIXED]:after {content: "FIXED";}
+.resolution[resolution=RESOLVEDDUPLICATE]:after {content: "DUPE";}
 
 #meta > section > dl > dd {
   color: #213135;
@@ -100,6 +105,8 @@ header {text-align:right; padding: 3px}
   border: 1px solid #EEE;
   border-width: 0 1px;
 }
+
+.comment > .h1 {}
 
 .comment > .date {
   float: right;

@@ -25,24 +25,17 @@
   <section id="metaandcomments">
     <section id="meta">
       <section class="status" caption="status: ">
-        <p class="toexpand resolution" data-resolution="{status}{resolution}" data-text="{resolution|status}"></p>
-        <dl class="written">
+        <p class="toexpand resolution" data-resolution="{status}{resolution}" data-title="{status} {resolution}"></p>
+        <dl>
+          <dd class="toexpand" data-text="{status} {resolution}"></dd>
           <dt>Written by:</dt>
           <dd class="toexpand avatar" data-style="background-image:url(http://avatars.io/email/{creator.name})" data-text="{creator.real_name|creator.name}"></dd>
-        </dl>
-        <dl class="assigned">
           <dt>Assigned to:</dt>
           <dd class="toexpand avatar" data-style="background-image:url(http://avatars.io/email/{assigned_to.name})" data-text="{assigned_to.real_name|assigned_to.name}"></dd>
-        </dl>
-        <dl>
           <dt>whiteboard:</dt>
           <dd><input class="toexpand" data-value="{whiteboard}"></dd>
-        </dl>
-        <dl class="qacontact">
           <dt>QA Contact:</dt>
           <dd class="toexpand" data-text="{qa_contact.name}"></dd>
-        </dl>
-        <dl class="target">
           <dt>target:</dt>
           <dd>
             <span class="toexpand" data-text="{priority}"></span>
