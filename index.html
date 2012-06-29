@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-
 <title class="toexpand" data-text="{alias} {summary} // bug {id}"></title>
 
 <meta charset="utf8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<link rel="icon" href="favicon.ico"/>
 
-<body classlist="{resolution} {status}">
+<body class="toexpand loading" classlist="{resolution} {status}">
 
   <header>
     <div id="loginstuff">
@@ -16,16 +16,17 @@
       </form>
       <span id="whoyouare"></span>
     </div>
+    <h1 class="toexpand" data-text="{alias} Bug {id} - {summary}"></h1>
   </header>
 
 
   <section id="metaandcomments">
-    <section id="meta" class="loading">
-      <section class="status" caption="status">
-        <p class="toexpand resolution" data-resolution="{resolution} {status}" data-text="{status} {resolution}"></p>
+    <section id="meta">
+      <section class="status" caption="status: ">
+        <p class="toexpand resolution" data-resolution="{status}{resolution}" data-text="{resolution|status}"></p>
         <dl class="written">
           <dt>Written by:</dt>
-          <dd class="toexpand" email="{creator.name}" data-text="{creator.real_name|creator.name}"></dd>
+          <dd class="toexpand avatar" data-style="background-image:url(http://avatars.io/email/{assigned_to.name})" data-text="{creator.real_name|creator.name}"></dd>
         </dl>
         <dl class="assigned">
           <dt>Assigned to:</dt>
@@ -68,7 +69,7 @@
       </section>
       <section class="followers" caption="followers"></section>
     </section>
-    <section id="comments" class="loading"></section>
+    <section id="comments"></section>
   </section>
 
   <div class="throbber"></div>

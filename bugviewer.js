@@ -1,7 +1,15 @@
 const REMOTE = "https://api-dev.bugzilla.mozilla.org/latest/";
 const URLREGEXP = /(^|\s)((https?:\/\/)[\w-]+(\.[\w-]+)+\.?(:\d+)?(\/\S*)?)/gi;
+const BUGREGEXP = /bug (\d+)/gi;
 
 let gBug;
+
+let bugsToResolve = {};
+
+function buildBugUrl(id) {
+  let hash = window.location.hash;
+  return window.location.href.replace(hash, "#" + id);
+}
 
 function newbug(data) {
   gBug = data;
@@ -19,24 +27,26 @@ function newbug(data) {
   }
   buildDependencyList();
   buildFollowersList();
-  $("#meta").classList.remove("loading");
 }
 
 function buildDependencyList() {
-  let code = "";
-  if (gBug.depends_on) {
-    for (let bug of gBug.depends_on) {
-      code += "<a>" + bug + "</a>";
+  for (let obj of [{in: gBug.depends_on, out: $(".dependencies > .dependson > dd")},
+                   {in: gBug.blocks, out: $(".dependencies > .blockers > dd")}]) {
+    if (obj.in) {
+      let code = "";
+      let first = true;
+      for (let bug of obj.in) {
+        if (!first) {
+          code += "<span class='separator'></span>"
+        }
+        code += "<a class='bug" + bug + "' href='" + buildBugUrl(bug) + "'>" + bug + "</a>";
+        if (!(bug in bugsToResolve)) {
+          bugsToResolve[bug] = 42; // I want to use a Set. But Sets are not itterable yes.
+        }
+        first = false;
+      }
+      obj.out.innerHTML = code;
     }
-    $(".dependencies > .dependson > dd").innerHTML = code;
-  }
-
-  code = "";
-  if (gBug.blocks) {
-    for (let bug of gBug.blocks) {
-      code += "<a>" + bug + "</a>";
-    }
-    $(".dependencies > .blockers > dd").innerHTML = code;
   }
 }
 
@@ -61,9 +71,20 @@ function buildFollowersList() {
   getAvatars($(".followers"));
 }
 
+function updateBugRefs(bugs) {
+  for (let bug of bugs) {
+    let nodes = document.querySelectorAll(".bug" + bug.id);
+    for (let node of nodes) {
+      node.setAttribute("status", bug.status);
+      node.setAttribute("title", bug.summary);
+    }
+  }
+}
+
 function newcomments(data) {
   let section = $("#comments");
-  let template = "<div class='comment'><p class='date'>{prettydate}<span class='commentcounter'> - #{counter}</span></p><p class='author' email='{creator.name}'>{creator.name}</p><pre>{prettytext}</pre></div>\n";
+  let template = "<div class='comment'><p class='date'>{prettydate}<span class='commentcounter'> - #{counter}</span></p>"
+     template += "<p class='author' email='{creator.name}'>{creator.name}</p><pre>{prettytext}</pre></div>\n";
   let html = "";
   let i = 0;
   let description;
@@ -72,15 +93,15 @@ function newcomments(data) {
       if (i == 0) {
         description = buildDescription(c);
       } else {
+        c.counter = i;
+        c.prettytext = formatComment(c.text);
+        c.prettydate = humaneDate(c.creation_time);
+          html = expand(template, c) + html;
       }
-      c.counter = i++;
-      c.prettytext = formatComment(c.text);
-      c.prettydate = humaneDate(c.creation_time);
-        html = expand(template, c) + html;
+      i++;
     }
     section.innerHTML = description + html;
   }
-  comments.classList.remove("loading");
   getAvatars(section);
 }
 
@@ -99,13 +120,17 @@ function formatComment(text) {
     if (lines[i][0] == ">" ||
         lines[i].indexOf("(In reply to ") == 0) {
       lines[i] = "<span class='quotedtext'>" + lines[i] + "</span>";
-    } else {
-      lines[i] = lines[i].replace(URLREGEXP, function(match) {
-        return "<a href=\'" + match + "\'>" + match + "</a>";
-      });
     }
   }
-  return lines.join("\n");
+  text = lines.join("\n");
+  text = text.replace(URLREGEXP, function(match) {return "<a href=\'" + match + "\'>" + match + "</a>";});
+  text = text.replace(BUGREGEXP, function(match, id) {
+    if (!(id in bugsToResolve)) {
+      bugsToResolve[id] = 42; // I want to use a Set. But Sets are not itterable yes.
+    }
+    return "<a class='bug" + id + "' href=\'" + buildBugUrl(id) + "\'>" + match + "</a>";
+  });
+  return text;
 }
 
 
