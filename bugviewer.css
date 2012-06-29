@@ -1,14 +1,15 @@
 @import url(http://fonts.googleapis.com/css?family=Varela);
 @import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300);
-body {font-family: 'Open Sans', sans-serif; color: #768990}
+body {font-family: 'Open Sans', sans-serif; color: #768990; margin-top: 0}
 * { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;}
 p {margin:0}
 h1 {color: #213135;clear:both}
-header > h1 {display: none}
+body > h1 {display: none}
 
 body.connected #login { display: none; }
 body:not(.connected) #whoyouare { display: none; }
-#loginstuff { float: right; }
+#loginstuff, #login {display: inline}
+header {text-align:right; padding: 3px}
 
 #metaandcomments {
   font-size: 0;
@@ -40,6 +41,8 @@ body:not(.connected) #whoyouare { display: none; }
 #meta {
   margin-right: -1px;
   padding: 20px;
+  background-color: #FDFDFD;
+  border: 1px solid #EEE;
 }
 
 #meta > section {
@@ -72,6 +75,11 @@ body:not(.connected) #whoyouare { display: none; }
 
 #meta > section > dl > dd {
   color: #213135;
+  margin-left: 15px;
+}
+
+#meta > section > dl > dd > input {
+  width: 100%;
 }
 
 .target > dd > span:not(:last-of-type):after {
@@ -97,8 +105,14 @@ body:not(.connected) #whoyouare { display: none; }
   float: right;
   font-size: 10px;
 }
+.comment:last-of-type:before {
+  content: "First comment";
+}
 .comment:nth-of-type(2):before {
   content: "Last comment";
+}
+.comment:last-of-type:before,
+.comment:nth-of-type(2):before {
   display: inline-block;
   color: black;
   margin-bottom: 10px;
@@ -163,15 +177,6 @@ body:not(.connected) #whoyouare { display: none; }
 
 /* misc */
 
-.loading .resolution {
-  -moz-animation-duration: 0.6s;
-  -moz-animation-name: boomboom;
-  -moz-animation-direction: alternate;
-  -moz-animation-iteration-count: infinite;
-  -moz-animation-timing-function: linear;
-}
-@-moz-keyframes boomboom {to { -moz-transform: scale(0.8) rotate(0.1deg); }}
-
 .separator:after,
 .followers > p > a:not(:last-of-type):after {
   content: " | ";
@@ -194,13 +199,17 @@ body:not(.connected) #whoyouare { display: none; }
   margin-bottom: 5px;
 }
 
-.loading #comments {
-  opacity: 0.5;
-}
-
 .loading {
   pointer-events: none;
-  opacity: 0.5;
+}
+.loading > #metaandcomments {
+  display: none;
+}
+.loading:after {
+  content: "loading…";
+  display: block;
+  text-align: center;
+  margin-top: 100px;
 }
 
 *[status=RESOLVED] {
@@ -214,13 +223,18 @@ a {
 /* Small view */
 
 @media (max-width: 800px) {
-  header > h1 {
+  body > h1 {
     display: block;
     font-size: 15px;
   }
   #meta, #comments {
     display: block;
     width: 100%;
+  }
+
+  #comments {
+    padding-left: 0;
+    padding-top: 10px;
   }
   .followers > ul > li {
     display: inline-block;

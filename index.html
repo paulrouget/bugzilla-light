@@ -15,9 +15,11 @@
         <input type="submit">
       </form>
       <span id="whoyouare"></span>
+      <span class="separator"></span>
     </div>
-    <h1 class="toexpand" data-text="{alias} Bug {id} - {summary}"></h1>
+    <a class="toexpand" data-href="https://bugzilla.mozilla.org/show_bug.cgi?id={id}">See bug on bugzilla</a>
   </header>
+  <h1 class="toexpand" data-text="{alias} Bug {id} - {summary}"></h1>
 
 
   <section id="metaandcomments">
@@ -26,11 +28,15 @@
         <p class="toexpand resolution" data-resolution="{status}{resolution}" data-text="{resolution|status}"></p>
         <dl class="written">
           <dt>Written by:</dt>
-          <dd class="toexpand avatar" data-style="background-image:url(http://avatars.io/email/{assigned_to.name})" data-text="{creator.real_name|creator.name}"></dd>
+          <dd class="toexpand avatar" data-style="background-image:url(http://avatars.io/email/{creator.name})" data-text="{creator.real_name|creator.name}"></dd>
         </dl>
         <dl class="assigned">
           <dt>Assigned to:</dt>
           <dd class="toexpand avatar" data-style="background-image:url(http://avatars.io/email/{assigned_to.name})" data-text="{assigned_to.real_name|assigned_to.name}"></dd>
+        </dl>
+        <dl>
+          <dt>whiteboard:</dt>
+          <dd><input class="toexpand" data-value="{whiteboard}"></dd>
         </dl>
         <dl class="qacontact">
           <dt>QA Contact:</dt>
@@ -45,7 +51,12 @@
           </dd>
         </dl>
       </section>
-      <section class="flags" caption="flags"></section>
+      <section class="flags" caption="flags">
+        <dl class="dependson">
+          <dt>FIXME:</dt>
+          <dd>fixme (attachments &amp; co)</dd>
+        </dl>
+      </section>
       <section class="dependencies" caption="dependencies">
         <dl class="dependson">
           <dt>Depends on:</dt>

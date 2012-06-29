@@ -10,7 +10,6 @@ function login(callback) {
   let req = new XMLHttpRequest();
   req.onreadystatechange = function(e) {
     if(this.readyState == this.DONE) {
-      $("header form").classList.remove("loading");
       if (this.status == 200) {
         localStorage.username = credentials.username;
         localStorage.password = credentials.password;
@@ -29,7 +28,6 @@ function login(callback) {
       }
     }
   }
-  $("header form").classList.add("loading");
   req.open("GET", url, true);
   req.setRequestHeader("Content-Type", "application/json");
   req.setRequestHeader("Accept", "application/json");
