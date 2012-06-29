@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<title>bug viewer</title>
+<title class="toexpand" data-text="{alias} {summary} // bug {id}"></title>
 
 <meta charset="utf8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -18,27 +18,30 @@
     </div>
   </header>
 
-  <h1 class="toexpand">{alias} Bug {id} - {summary}</h1>
 
   <section id="metaandcomments">
     <section id="meta" class="loading">
       <section class="status" caption="status">
-        <p class="toexpand resolution" classlist="{resolution} {status}">{resolution}: {status}</p>
+        <p class="toexpand resolution" data-resolution="{resolution} {status}" data-text="{status} {resolution}"></p>
         <dl class="written">
           <dt>Written by:</dt>
-          <dd class="toexpand" email="{creator.name}">{creator.real_name}</dd>
+          <dd class="toexpand" email="{creator.name}" data-text="{creator.real_name|creator.name}"></dd>
         </dl>
         <dl class="assigned">
           <dt>Assigned to:</dt>
-          <dd class="toexpand" email="{assigned_to.name}">{assigned_to.real_name}</dd>
+          <dd class="toexpand avatar" data-style="background-image:url(http://avatars.io/email/{assigned_to.name})" data-text="{assigned_to.real_name|assigned_to.name}"></dd>
         </dl>
         <dl class="qacontact">
           <dt>QA Contact:</dt>
-          <dd class="toexpand">{qa_contact.name}</dd>
+          <dd class="toexpand" data-text="{qa_contact.name}"></dd>
         </dl>
         <dl class="target">
           <dt>target:</dt>
-          <dd class="toexpand"><span>{priority}</span><span>{severity}</span><span>{target_milestone}</span></dd>
+          <dd>
+            <span class="toexpand" data-text="{priority}"></span>
+            <span class="toexpand" data-text="{severity}"></span>
+            <span class="toexpand" data-text="{target_milestone}"></span>
+          </dd>
         </dl>
       </section>
       <section class="flags" caption="flags"></section>
@@ -55,12 +58,12 @@
       <section class="affects" caption="affects">
         <dl class="product">
           <dt>Product:</dt>
-          <dd class="toexpand">{product}</dd>
+          <dd class="toexpand" data-text="{product}"></dd>
         </dl>
 
         <dl class="platform">
           <dt>Platform:</dt>
-          <dd class="toexpand">{platform}</dd>
+          <dd class="toexpand" data-text="{platform}"></dd>
         </dl>
       </section>
       <section class="followers" caption="followers"></section>
@@ -72,4 +75,8 @@
 </body>
 
 <link rel="stylesheet" href="bugviewer.css">
+<script src="date.js"></script>
+<script type="application/javascript;version=1.8" src="utils.js"></script>
+<script type="application/javascript;version=1.8" src="bugzilla.js"></script>
+<script type="application/javascript;version=1.8" src="login.js"></script>
 <script type="application/javascript;version=1.8" src="bugviewer.js"></script>
