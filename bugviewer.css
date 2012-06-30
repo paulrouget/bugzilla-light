@@ -83,7 +83,8 @@ header {text-align:right; padding: 3px}
   margin-left: 15px;
 }
 
-#meta > section > dl > dd > input {
+#meta textarea,
+#meta input {
   width: 100%;
 }
 
@@ -104,6 +105,17 @@ header {text-align:right; padding: 3px}
   background-color: #FdFdFd;
   border: 1px solid #EEE;
   border-width: 0 1px;
+}
+
+.comment.mine {
+  background-image: -moz-linear-gradient(top left, #F06 12px, transparent 12px);
+  background-size: 20px 20px;
+  background-repeat: no-repeat;
+}
+
+.comment:focus {
+  box-shadow: 2px 0 0 #999 inset, 0 -1px 0 #EEE inset;
+  outline: 0;
 }
 
 .comment > .h1 {}

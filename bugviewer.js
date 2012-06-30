@@ -83,20 +83,21 @@ function updateBugRefs(bugs) {
 
 function newcomments(data) {
   let section = $("#comments");
-  let template = "<div class='comment'><p class='date'>{prettydate}<span class='commentcounter'> - #{counter}</span></p>"
+  let template = "<div class='comment {mine}' tabindex='0'><p class='date'>{prettydate}<span class='commentcounter'> - #{counter}</span></p>"
      template += "<p class='author' email='{creator.name}'>{creator.name}</p><pre>{prettytext}</pre></div>\n";
   let html = "";
   let i = 0;
   let description;
   if (data.comments) {
     for (let c of data.comments) {
+      c.counter = i;
+      c.mine = (gEmail && (c.creator.name == gEmail))?"mine":"";
+      c.prettytext = formatComment(c.text);
+      c.prettydate = humaneDate(c.creation_time);
       if (i == 0) {
         description = buildDescription(c);
       } else {
-        c.counter = i;
-        c.prettytext = formatComment(c.text);
-        c.prettydate = humaneDate(c.creation_time);
-          html = expand(template, c) + html;
+        html = expand(template, c) + html;
       }
       i++;
     }
@@ -109,7 +110,7 @@ function buildDescription(c) {
   let h1 = expand("<h1>{alias} Bug {id} - {summary}</h1>", gBug);
   c.prettytext = formatComment(c.text);
   c.prettydate = humaneDate(c.creation_time);
-  let template = "<div class='comment'>" + h1 + "<p class='date'>{prettydate}</p><p class='author' email='{creator.name}'>{creator.name}</p><pre>{prettytext}</pre></div>\n";
+  let template = "<div class='comment {mine}' tabindex='0'>" + h1 + "<p class='date'>{prettydate}</p><p class='author' email='{creator.name}'>{creator.name}</p><pre>{prettytext}</pre></div>\n";
   return expand(template, c);
 }
 
@@ -132,17 +133,3 @@ function formatComment(text) {
   });
   return text;
 }
-
-
-console.log("-----------------------------------");
-tryToLogin(function(logged) {
-  window.onhashchange = function handleNewLocation() {
-    let bugid = parseInt(window.location.hash.split("#")[1]);
-    if (isNaN(bugid)) {
-      alert("Bug id incorrect");
-    } else {
-      getBugAndComments(bugid, newbug, newcomments);
-    }
-  }
-  window.onhashchange();
-});

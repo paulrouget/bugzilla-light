@@ -10,8 +10,7 @@ function getBugAndComments(bugid, onbug, oncomments) {
       commentreq.onreadystatechange = function() {
         if (this.readyState == this.DONE) {
           newcomments(JSON.parse(this.responseText));
-          document.body.classList.remove("loading");
-          resolveBugs();
+          pageLoaded();
         }
       }
       commentreq.open("GET", REMOTE + "/bug/" + bugid + "/comment" + urlCredentials(), true);

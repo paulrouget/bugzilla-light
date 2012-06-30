@@ -1,3 +1,5 @@
+let gEmail = "";
+
 function login(callback) {
   let username = $("#loginusername").value;
   let password = $("#loginpassword").value;
@@ -15,6 +17,7 @@ function login(callback) {
         localStorage.password = credentials.password;
         document.body.classList.add("connected");
         $("#whoyouare").textContent = "<" + credentials.username + ">";
+        gEmail = credentials.username;
         callback(true);
       } else {
         document.body.classList.remove("connected");
@@ -60,6 +63,7 @@ function tryToLogin(callback) {
     $("#loginusername").value = credentials.username;
     $("#loginpassword").value = credentials.password;
     login(callback);
+  } else {
+    callback(false);
   }
-  callback(false);
 }
