@@ -1,93 +1,129 @@
 <!DOCTYPE html>
-<title class="toexpand" data-text="{alias} {summary} // bug {id}"></title>
 
 <meta charset="utf8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <link rel="icon" href="favicon.ico"/>
 
-<body class="toexpand loading" classlist="{resolution} {status}">
+<title>Bugzilla Light</title>
 
-  <header>
-    <div id="loginstuff">
-      <form id="login" onsubmit="login()">
+<link rel="stylesheet" href="style.css">
+
+<script>
+  var gWorld = {server: "https://api-dev.bugzilla.mozilla.org/latest/",
+                connected: false};
+</script>
+
+<script src="mustache.js"></script>
+<script type="application/javascript;version=1.8" src="utils.js"></script>
+<script type="application/javascript;version=1.8" src="date.js"></script>
+<script type="application/javascript;version=1.8" src="network.js"></script>
+<script type="application/javascript;version=1.8" src="resolver.js"></script>
+
+<header>
+  <div class="loginblock">
+    <script type="text/html" when="onlogin">
+      <div class="ifconnected">
+        Logged as: {{username}}<button onclick="UI.logout()">logout</button>
+      </div>
+    </script>
+    <div class="ifnotconnected">
+      <form onsubmit="UI.login();return false">
         <input type="email" placeholder="email" id="loginusername">
         <input type="password" placeholder="password" id="loginpassword">
         <input type="submit">
       </form>
-      <span id="whoyouare"></span>
-      <span class="separator"></span>
     </div>
-    <a class="toexpand" data-href="https://bugzilla.mozilla.org/show_bug.cgi?id={id}">See bug on bugzilla</a>
-  </header>
-  <h1 class="toexpand" data-text="{alias} Bug {id} - {summary}"></h1>
+  </div>
+</header>
 
-
-  <section id="metaandcomments">
-    <section id="meta">
-      <section class="status" caption="status: ">
-        <p class="toexpand resolution" data-resolution="{status}{resolution}" data-title="{status} {resolution}"></p>
-        <dl>
-          <dd class="toexpand" data-text="{status} {resolution}"></dd>
-          <dt>Written by:</dt>
-          <dd class="toexpand avatar" data-style="background-image:url(http://avatars.io/email/{creator.name})" data-text="{creator.real_name|creator.name}"></dd>
-          <dt>Assigned to:</dt>
-          <dd class="toexpand avatar" data-style="background-image:url(http://avatars.io/email/{assigned_to.name})" data-text="{assigned_to.real_name|assigned_to.name}"></dd>
-          <dt>whiteboard:</dt>
-          <dd><input class="toexpand" data-value="{whiteboard}"></dd>
-          <dt>QA Contact:</dt>
-          <dd class="toexpand" data-text="{qa_contact.name}"></dd>
-          <dt>target:</dt>
-          <dd>
-            <span class="toexpand" data-text="{priority}"></span>
-            <span class="toexpand" data-text="{severity}"></span>
-            <span class="toexpand" data-text="{target_milestone}"></span>
-          </dd>
-        </dl>
-      </section>
-      <section class="flags" caption="flags">
-        <dl class="dependson">
-          <dt>FIXME:</dt>
-          <dd>fixme (attachments &amp; co)</dd>
-        </dl>
-      </section>
-      <section class="dependencies" caption="dependencies">
-        <dl class="dependson">
-          <dt>Depends on:</dt>
-          <dd></dd>
-        </dl>
-        <dl class="blockers">
-          <dt>Blocks:</dt>
-          <dd></dd>
-        </dl>
-      </section>
-      <section caption="local notes:">
-        <p>
-        <textarea id="localnotes" placeholder="local notes are saved in localStorage automatically."></textarea>
-        </p>
-      </section>
-      <section class="affects" caption="affects">
-        <dl class="product">
-          <dt>Product:</dt>
-          <dd class="toexpand" data-text="{product}"></dd>
-        </dl>
-
-        <dl class="platform">
-          <dt>Platform:</dt>
-          <dd class="toexpand" data-text="{platform}"></dd>
-        </dl>
-      </section>
-      <section class="followers" caption="followers"></section>
+<section class="bugcontent">
+  <script type="text/html" when="onbugmeta" class="meta">
+    <h1>{{bug.summary}}</h1>
+    <section>
+      <p class="caption">Status:</p>
+      <dl>
+        <dd>{{bug.status}} {{bug.resolution}}
+        <dt>Written by:
+        <dd class="avatar" style="background-image:url(http://avatars.io/email/{{bug.creator.name}})">{{bug.creator.real_name}}{{^bug.creator.real_name}}{{bug.creator.name}}{{/bug.creator.real_name}}
+        <dt>Assigned to:
+        <dd class="avatar" style="background-image:url(http://avatars.io/email/{{bug.assigned_to.name}})">{{bug.assigned_to.real_name}}{{^bug.assigned_to.real_name}}{{bug.assigned_to.name}}{{/bug.assigned_to.real_name}}
+        <dt>whiteboard:
+        <dd><input value="{{bug.whiteboard}}">
+        <dt>QA Contact:
+        <dd>{{qa_contact.name}}
+        <dt>target:
+        <dd>
+          <span>{{bug.priority}}</span>
+          <span>{{bug.severity}}</span>
+          <span>{{bug.target_milestone}}</span>
+        </dd>
+      </dl>
     </section>
-    <section id="comments"></section>
-  </section>
+    <section>
+      <p class="caption">Flags:</p>
+      FIXME
+    </section>
+    <section>
+      <p class="caption">Dependencies:</p>
+      <dl>
+        <dt>Depends on:</dt>
+        <dd>
+        {{#bug.depends_on}}
+          <a class="bug{{.}}" href="#{{.}}">{{.}}</a>
+        {{/bug.depends_on}}
+        </dd>
+      </dl>
+      <dl>
+        <dt>Blocks:</dt>
+        <dd>
+        {{#bug.blocks}}
+          <a class="bug{{.}}" href="#{{.}}">{{.}}</a>
+        {{/bug.blocks}}
+        </dd>
+      </dl>
+    </section>
+    <section caption="local notes:">
+      <p>
+      <textarea id="localnotes" placeholder="local notes are saved in localStorage automatically."></textarea>
+      </p>
+    </section>
+    <section>
+      <p class="caption">Affects:</p>
+      <dl>
+        <dt>Product:</dt>
+        <dd>{{bug.product}}
+      </dl>
 
-  <div class="throbber"></div>
-</body>
+      <dl class="platform">
+        <dt>Platform:</dt>
+        <dd>{{bug.platform}}
+      </dl>
+    </section>
+    <section class="followers">
+      <p class="caption">Followers:</p>
+      <ul class="followers">
+        {{#bug.cc}}
+        <li class="avatar" style="background-image:url(http://avatars.io/email/{{name}})" title='{name}'>{{name}} </li>
+        {{/bug.cc}}
+      </ul>
+    </section>
+  </script>
+  <script type="text/html" when="oncomments" class="comments">
+    {{#comments}}
+    <div tabindex="0" class="comment {{mine}}">
+      <p class="date">{{prettydate}}<span class="commentcounter"> - #{{counter}}</span></p>
+      <p style="background-image: url(http://avatars.io/email/{{creator.name}})" class="author avatar">{{creator.name}}</p>
+      <pre class="message">{{{formatedtext}}}</pre>
+    </div>
+    {{/comments}}
+  </script>
+</section>
 
-<link rel="stylesheet" href="bugviewer.css">
-<script src="date.js"></script>
-<script type="application/javascript;version=1.8" src="utils.js"></script>
-<script type="application/javascript;version=1.8" src="bugzilla.js"></script>
-<script type="application/javascript;version=1.8" src="login.js"></script>
-<script type="application/javascript;version=1.8" src="bugviewer.js"></script>
-<script type="application/javascript;version=1.8" src="main.js"></script>
+<footer>
+  <pre tabindex="0" class="glog"></pre>
+  <script type="text/html" when="onload">
+    Server: <span class="gserver">{{server}}</span>
+  </script>
+</footer>
+
+<script type="application/javascript;version=1.8" src="ui.js"></script>
