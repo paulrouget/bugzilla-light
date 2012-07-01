@@ -9,50 +9,56 @@
 <link rel="stylesheet" href="style.css">
 
 <script>
-  var gWorld = {server: "https://api-dev.bugzilla.mozilla.org/latest/",
+  var gWorld = {test: true, bugzillaurl: "https://landfill.bugzilla.org/bzapi_sandbox/",
                 connected: false};
 </script>
 
 <script src="mustache.js"></script>
 <script type="application/javascript;version=1.8" src="utils.js"></script>
 <script type="application/javascript;version=1.8" src="date.js"></script>
-<script type="application/javascript;version=1.8" src="network.js"></script>
+<script type="application/javascript;version=1.8" src="markdown.js"></script>
+<script type="application/javascript;version=1.8" src="bz.js"></script>
 <script type="application/javascript;version=1.8" src="resolver.js"></script>
+<script type="application/javascript;version=1.8" src="keybindings.js"></script>
+<script type="application/javascript;version=1.8" src="updatebug.js"></script>
 
 <header>
-  <div class="loginblock">
-    <script type="text/html" when="onlogin">
-      <div class="ifconnected">
-        Logged as: {{username}}<button onclick="UI.logout()">logout</button>
-      </div>
+  <span class="loginblock">
+    <script type="text/html" when="onlogin" tagname="span">
+      <span class="ifconnected">
+        &lt;{{username}}&gt;<button onclick="UI.logout()">logout</button>
+      </span>
     </script>
-    <div class="ifnotconnected">
-      <form onsubmit="UI.login();return false">
-        <input type="email" placeholder="email" id="loginusername">
-        <input type="password" placeholder="password" id="loginpassword">
+    <span >
+      <form onsubmit="UI.login();return false" class="ifnotconnected">
+        <input type="email" placeholder="email" class="loginusername">
+        <input type="password" placeholder="password" class="loginpassword">
         <input type="submit">
       </form>
     </div>
-  </div>
+  </span>
+  <script type="text/html" when="onbugmeta" tagname="span">
+    <a href="{{bugzillaurl}}show_bug.cgi?id={{bug.id}}">open in bugzilla</a>
+  </script>
 </header>
 
 <section class="bugcontent">
-  <script type="text/html" when="onbugmeta" class="meta">
-    <h1>{{bug.summary}}</h1>
+  <script type="text/html" when="onbugmeta" classlist="meta">
+    <h1>{{bug.alias}} Bug {{bug.id}} - {{bug.summary}}</h1>
     <section>
       <p class="caption">Status:</p>
       <dl>
-        <dd>{{bug.status}} {{bug.resolution}}
+        <dd class="editable">{{bug.status}} {{bug.resolution}}
         <dt>Written by:
         <dd class="avatar" style="background-image:url(http://avatars.io/email/{{bug.creator.name}})">{{bug.creator.real_name}}{{^bug.creator.real_name}}{{bug.creator.name}}{{/bug.creator.real_name}}
         <dt>Assigned to:
-        <dd class="avatar" style="background-image:url(http://avatars.io/email/{{bug.assigned_to.name}})">{{bug.assigned_to.real_name}}{{^bug.assigned_to.real_name}}{{bug.assigned_to.name}}{{/bug.assigned_to.real_name}}
+        <dd class="editable avatar" style="background-image:url(http://avatars.io/email/{{bug.assigned_to.name}})">{{bug.assigned_to.real_name}}{{^bug.assigned_to.real_name}}{{bug.assigned_to.name}}{{/bug.assigned_to.real_name}}
         <dt>whiteboard:
-        <dd><input value="{{bug.whiteboard}}">
+        <dd><form onsubmit="gUpdate.whiteboard()"><input id="form-whiteboard" value="{{bug.whiteboard}}"></form>
         <dt>QA Contact:
-        <dd>{{qa_contact.name}}
+        <dd>{{bug.qa_contact.name}}
         <dt>target:
-        <dd>
+        <dd class="separate">
           <span>{{bug.priority}}</span>
           <span>{{bug.severity}}</span>
           <span>{{bug.target_milestone}}</span>
@@ -67,7 +73,7 @@
       <p class="caption">Dependencies:</p>
       <dl>
         <dt>Depends on:</dt>
-        <dd>
+        <dd class="separate">
         {{#bug.depends_on}}
           <a class="bug{{.}}" href="#{{.}}">{{.}}</a>
         {{/bug.depends_on}}
@@ -75,17 +81,19 @@
       </dl>
       <dl>
         <dt>Blocks:</dt>
-        <dd>
+        <dd class="separate">
         {{#bug.blocks}}
           <a class="bug{{.}}" href="#{{.}}">{{.}}</a>
         {{/bug.blocks}}
         </dd>
       </dl>
     </section>
-    <section caption="local notes:">
-      <p>
-      <textarea id="localnotes" placeholder="local notes are saved in localStorage automatically."></textarea>
-      </p>
+    <section>
+      <p class="caption">Local:</p>
+      <dl>
+        <dt>Notes:</dt>
+        <dd><textarea id="localnotes" placeholder="local notes are saved in localStorage automatically."></textarea>
+      </dl>
     </section>
     <section>
       <p class="caption">Affects:</p>
@@ -101,6 +109,8 @@
     </section>
     <section class="followers">
       <p class="caption">Followers:</p>
+      <button class="followbutton" onclick="UI.follow()">follow</button>
+      <button class="unfollowbutton" onclick="UI.unfollow()">unfollow</button>
       <ul class="followers">
         {{#bug.cc}}
         <li class="avatar" style="background-image:url(http://avatars.io/email/{{name}})" title='{name}'>{{name}} </li>
@@ -108,22 +118,19 @@
       </ul>
     </section>
   </script>
-  <script type="text/html" when="oncomments" class="comments">
+  <script type="text/html" when="oncomments" classlist="comments">
     {{#comments}}
-    <div tabindex="0" class="comment {{mine}}">
+    <div tabindex="0" class="comment {{mine}} {{markdown}}">
       <p class="date">{{prettydate}}<span class="commentcounter"> - #{{counter}}</span></p>
       <p style="background-image: url(http://avatars.io/email/{{creator.name}})" class="author avatar">{{creator.name}}</p>
       <pre class="message">{{{formatedtext}}}</pre>
     </div>
     {{/comments}}
+    <div class="addcomment">
+      <textarea placeholder="Please, be nice and respectful."></textarea>
+      <button onclick="gUpdate.postComment()">Send</button>
+    </div>
   </script>
 </section>
-
-<footer>
-  <pre tabindex="0" class="glog"></pre>
-  <script type="text/html" when="onload">
-    Server: <span class="gserver">{{server}}</span>
-  </script>
-</footer>
 
 <script type="application/javascript;version=1.8" src="ui.js"></script>

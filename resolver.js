@@ -20,9 +20,12 @@ let gResolver = {
   },
   resolveBugs: function() {
     this.uniquify();
-    gNetwork.resolveBugs(this.bugs, function(bugs) {
-      if (!bugs) {
-        log("Error while resolving bugs");
+    gBz.searchBugs({
+      "include_fields": "id,status,summary",
+      "id": this.bugs.join(",")
+    }, function(error, bugs) {
+      if (error) {
+        console.error("Error while resolving bugs:" + error);
         return;
       }
       for (let bug of bugs) {

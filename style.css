@@ -1,41 +1,44 @@
 /* Fonts */
-  @import url(http://fonts.googleapis.com/css?family=Varela);
   @import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300);
   body {font-family: 'Open Sans', sans-serif}
-  h1, h2 {font-family: 'varela', sans-serif}
 
 /* Global */
   * { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;}
-  body {margin:0}
-  script {display:none!important}
+  body {margin:0;color: #768990}
+  h1 {color: #213135}
 
   body:not(.connected) .ifconnected {display: none;}
   body.connected .ifnotconnected {display: none;}
 
-/* Footer */
-  footer {font-size: 12px; border-top: 1px dotted black; width: 100%; padding: 5px; text-align: right}
-  .glog { margin: 0; line-height: 12px; max-height: 12px; overflow: hidden; display: inline-block; float:left;text-align:left}
-  .glog:focus { max-height: none; }
+  .loading {pointer-events: none; opacity:0.5}
+  .loading:after {
+    content: url(throbber.gif);
+  }
+
+  .separate > *:not(:last-of-type):after {
+    content: " | ";
+    color: #EEE;
+  }
 
 /* Header */
-  header {font-size: 12px; border-bottom: 1px dotted black; width: 100%; padding: 5px; text-align: right}
+  header {font-size: 12px; width: 100%; padding: 2px; text-align: right}
 
 /* Bug layout */
   .bugcontent {
-    margin: 40px;
+    margin: 0 40px;
     font-size: 0;
   }
   .meta, .comments {
     font-size: 13px;
     vertical-align: top;
     display: inline-block;
+    margin-bottom: 40px;
   }
 
 /* meta */
   .meta {
     width: 30%;
     margin-right: -1px;
-    padding: 20px;
     background-color: #FDFDFD;
     border: 1px solid #EEE;
   }
@@ -43,8 +46,25 @@
     text-overflow: ellipsis;
     overflow: hidden;
   }
+  .meta > h1 {
+    margin: 10px;
+  }
   .meta > section {
-    padding-left: 15px;
+    border-top: 1px solid #EEE;
+    padding: 20px 20px 20px 35px;
+  }
+  .meta dd {
+    margin: 4px 0 4px 24px;
+    color: #213135;
+  }
+  .meta input,
+  .meta textarea {
+    width: 100%;
+    font-family: 'Open Sans';
+    font-size: 12px;
+    border: 1px solid #EEE;
+    box-shadow: none;
+    padding: 5px;
   }
   .caption {
     text-transform: uppercase;
@@ -59,6 +79,11 @@
   }
   .followers > li {
     margin-bottom: 5px;
+  }
+
+  .meta.cced .followbutton,
+  .meta:not(.cced) .unfollowbutton {
+    display: none;
   }
 
 /* avatar */
@@ -121,12 +146,12 @@
     background-size: 20px 20px;
     background-repeat: no-repeat;
   }
-  .quotedtext {
+  blockquote, .quotedtext {
     color: green;
   }
 
   .comment:focus {
-    box-shadow: 2px 0 0 #999 inset, 0 -1px 0 #EEE inset;
+    box-shadow: 1px 0 0 #000 inset;
     outline: 0;
   }
 
@@ -143,3 +168,59 @@
   a:visited {
     color: #F06;
   }
+
+/* New comment */
+  .addcomment {
+    padding: 5px;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    background-color: #FdFdFd;
+    border: 1px solid #EEE;
+    border-width: 0 1px 1px;
+    text-align: right;
+  }
+  .addcomment > textarea {
+    display: block;
+    width: 100%;
+    padding: 5px;
+    font-family: 'Open Sans';
+    font-size: 12px;
+  }
+  .addcomment > button {
+    -moz-appearance: none;
+    border: 1px solid black;
+    text-align: right;
+    margin: 10px 0;
+  }
+
+/* Markdown */
+  .markdown > .message {
+    white-space: normal;
+  }
+  .markdown-markdown {
+    display: none; /* Remove the markdown generated header */
+  }
+
+/* Small view */
+@media (max-width: 800px) {
+  .meta, .comments {
+    display: block;
+    width: 100%;
+  }
+  .bugcontent {
+    margin: 0;
+  }
+
+  .comments {
+    padding-left: 0;
+    padding-top: 10px;
+  }
+  .followers > ul > li {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    vertical-align: top;
+    overflow: hidden;
+  }
+}

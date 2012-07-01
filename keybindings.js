@@ -1,12 +1,17 @@
 let gKeyBindings = {
   init: function() {
-    $(".comments").addEventListener("keyup", function(e) {
+  },
+  init: function() {
+    window.addEventListener("keyup", function(e) {
       let current = $(".comment:focus");
-      if (!current) return;
       let node = current;
-      let top = current.getBoundingClientRect().top;
+      let top;
+      if (current) {
+        top = current.getBoundingClientRect().top;
+      }
       switch (e.keyCode) {
         case e.DOM_VK_J:
+          if (!node) return;
           do {
             node = node.nextSibling;
           } while (node && node.nodeType == 3); // text node
@@ -17,6 +22,7 @@ let gKeyBindings = {
           }
           break;
         case e.DOM_VK_K:
+          if (!node) return;
           do {
             node = node.previousSibling;
           } while (node && node.nodeType == 3); // text node
@@ -28,9 +34,9 @@ let gKeyBindings = {
           let comments = $$(".comment");
           if (!e.shiftKey) {
             document.documentElement.scrollTop = 0;
-            comments[0].focus();
+            current && comments[0].focus();
           } else {
-            comments[comments.length - 1].focus();
+            current && comments[comments.length - 1].focus();
             document.documentElement.scrollTop = document.body.scrollHeight;
           }
           break;

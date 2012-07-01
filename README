@@ -1,14 +1,13 @@
-wip
-
 todo:
-- resolve bug / title / stroke
-- fast reload
-- "followe bug"
+- fast login
+- fold sections
+- fast reload (missing throbber)
+- "follow bug"
 - "track bug"
-- focusable / keybindings
 - localNotes
-- favico
-- logout
-- resolution "flag"
-- attachment (resolve and preview)
+- resolution "logo"
+- attachment (resolve and preview and in meta)
 - update title
+- mobile
+- markdown
+- Mid-air collision
