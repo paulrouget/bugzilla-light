@@ -4,7 +4,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <link rel="icon" href="favicon.ico"/>
 
-<title>Bugzilla Light</title>
+<script type="text/html" template="title" tagname="title">{{#bug.alias}}{{bug.alias}} | {{/bug.alias}}Bug {{bug.id}} - {{bug.summary}}</script>
+
 
 <link rel="stylesheet" href="style.css">
 
@@ -21,104 +22,124 @@
 <script type="application/javascript;version=1.8" src="resolver.js"></script>
 <script type="application/javascript;version=1.8" src="keybindings.js"></script>
 <script type="application/javascript;version=1.8" src="updatebug.js"></script>
+<script type="application/javascript;version=1.8" src="template.js"></script>
 
 <header>
   <span class="loginblock">
-    <script type="text/html" when="onlogin" tagname="span">
+    <script type="text/html" template="login" tagname="span">
       <span class="ifconnected">
         &lt;{{username}}&gt;<button onclick="UI.logout()">logout</button>
       </span>
     </script>
-    <span >
-      <form onsubmit="UI.login();return false" class="ifnotconnected">
-        <input type="email" placeholder="email" class="loginusername">
-        <input type="password" placeholder="password" class="loginpassword">
-        <input type="submit">
-      </form>
-    </div>
   </span>
-  <script type="text/html" when="onbugmeta" tagname="span">
+  <span>
+    <form onsubmit="UI.login();return false" class="ifnotconnected">
+      <input type="email" placeholder="email" class="loginusername">
+      <input type="password" placeholder="password" class="loginpassword">
+      <input type="submit">
+    </form>
+  </span>
+  <script type="text/html" template="bugzillalink" tagname="span">
     <a href="{{bugzillaurl}}show_bug.cgi?id={{bug.id}}">open in bugzilla</a>
   </script>
 </header>
 
 <section class="bugcontent">
-  <script type="text/html" when="onbugmeta" classlist="meta">
-    <h1>{{bug.alias}} Bug {{bug.id}} - {{bug.summary}}</h1>
+  <div class="meta">
+    <script type="text/html" template="h1" tagname="h1">{{#bug.alias}}{{bug.alias}} | {{/bug.alias}}Bug {{bug.id}} - {{bug.summary}}</script>
     <section>
       <p class="caption">Status:</p>
-      <dl>
-        <dd class="editable">{{bug.status}} {{bug.resolution}}
-        <dt>Written by:
-        <dd class="avatar" style="background-image:url(http://avatars.io/email/{{bug.creator.name}})">{{bug.creator.real_name}}{{^bug.creator.real_name}}{{bug.creator.name}}{{/bug.creator.real_name}}
-        <dt>Assigned to:
-        <dd class="editable avatar" style="background-image:url(http://avatars.io/email/{{bug.assigned_to.name}})">{{bug.assigned_to.real_name}}{{^bug.assigned_to.real_name}}{{bug.assigned_to.name}}{{/bug.assigned_to.real_name}}
-        <dt>whiteboard:
-        <dd><form onsubmit="gUpdate.whiteboard()"><input id="form-whiteboard" value="{{bug.whiteboard}}"></form>
-        <dt>QA Contact:
-        <dd>{{bug.qa_contact.name}}
-        <dt>target:
-        <dd class="separate">
-          <span>{{bug.priority}}</span>
-          <span>{{bug.severity}}</span>
-          <span>{{bug.target_milestone}}</span>
-        </dd>
-      </dl>
+      <script type="text/html" template="status">
+        <form onsubmit="gUpdate.commit(this, 'status'); return false">
+          <input type="submit" style="display:none;">
+          <dl>
+            <dd class="editable">{{bug.status}} {{bug.resolution}}
+            <dt>Written by:
+            <dd class="avatar" style="background-image:url(http://avatars.io/email/{{bug.creator.name}})">{{bug.creator.real_name}}{{^bug.creator.real_name}}{{bug.creator.name}}{{/bug.creator.real_name}}
+            <dt>Assigned to:
+            <dd class="editable avatar" style="background-image:url(http://avatars.io/email/{{bug.assigned_to.name}})">{{bug.assigned_to.real_name}}{{^bug.assigned_to.real_name}}{{bug.assigned_to.name}}{{/bug.assigned_to.real_name}}
+            <dt>whiteboard:
+            <dd><input name="whiteboard" value="{{bug.whiteboard}}">
+            <dt>QA Contact:
+            <dd><input type="email" name="qa_contact.name" value="{{bug.qa_contact.name}}">
+            <dt>target:
+            <dd class="separate">
+              <span>{{bug.priority}}</span>
+              <span>{{bug.severity}}</span>
+              <span>{{bug.target_milestone}}</span>
+            </dd>
+          </dl>
+        </form>
+      </script>
     </section>
     <section>
       <p class="caption">Flags:</p>
-      FIXME
+      <script type="text/html" template="flags">
+        FIXME (attachments &amp; co)
+      </script>
     </section>
     <section>
       <p class="caption">Dependencies:</p>
-      <dl>
-        <dt>Depends on:</dt>
-        <dd class="separate">
-        {{#bug.depends_on}}
-          <a class="bug{{.}}" href="#{{.}}">{{.}}</a>
-        {{/bug.depends_on}}
-        </dd>
-      </dl>
-      <dl>
-        <dt>Blocks:</dt>
-        <dd class="separate">
-        {{#bug.blocks}}
-          <a class="bug{{.}}" href="#{{.}}">{{.}}</a>
-        {{/bug.blocks}}
-        </dd>
-      </dl>
+      <script type="text/html" template="dependencies" execbefore="gResolver.addDependencies()" execafter="gResolver.resolveBugs()">
+        <dl>
+          <dt>Depends on:</dt>
+          <dd class="separate">
+          {{#bug.depends_on}}
+            <a class="bug{{.}}" href="#{{.}}">{{.}}</a>
+          {{/bug.depends_on}}
+          </dd>
+        </dl>
+        <dl>
+          <dt>Blocks:</dt>
+          <dd class="separate">
+          {{#bug.blocks}}
+            <a class="bug{{.}}" href="#{{.}}">{{.}}</a>
+          {{/bug.blocks}}
+          </dd>
+        </dl>
+      </script>
     </section>
     <section>
       <p class="caption">Local:</p>
-      <dl>
-        <dt>Notes:</dt>
-        <dd><textarea id="localnotes" placeholder="local notes are saved in localStorage automatically."></textarea>
-      </dl>
+      <script type="text/html" template="local">
+        <dl>
+          <dt>Notes:</dt>
+          <dd><textarea id="localnotes" placeholder="local notes are saved in localStorage automatically."></textarea>
+        </dl>
+      </script>
     </section>
     <section>
       <p class="caption">Affects:</p>
-      <dl>
-        <dt>Product:</dt>
-        <dd>{{bug.product}}
-      </dl>
+      <script type="text/html" template="affects">
+        <dl>
+          <dt>Product:</dt>
+          <dd>{{bug.product}}
+        </dl>
 
-      <dl class="platform">
-        <dt>Platform:</dt>
-        <dd>{{bug.platform}}
-      </dl>
+        <dl class="platform">
+          <dt>Platform:</dt>
+          <dd>{{bug.platform}}
+        </dl>
+      </script>
     </section>
-    <section class="followers">
+    <section>
       <p class="caption">Followers:</p>
-      <button class="followbutton" onclick="UI.follow()">follow</button>
-      <button class="unfollowbutton" onclick="UI.unfollow()">unfollow</button>
-      <ul class="followers">
-        {{#bug.cc}}
-        <li class="avatar" style="background-image:url(http://avatars.io/email/{{name}})" title='{name}'>{{name}} </li>
-        {{/bug.cc}}
-      </ul>
+      <script type="text/html" template="followers" execbefore="UI.preprocessFollowers()">
+        {{#following}}
+        <button class="unfollowbutton" onclick="gUpdate.unfollow()">unfollow</button>
+        {{/following}}
+        {{^following}}
+        <button class="followbutton" onclick="gUpdate.follow()">follow</button>
+        {{/following}}
+        <ul class="followers">
+          {{#bug.cc}}
+          <li class="avatar" style="background-image:url(http://avatars.io/email/{{name}})" title='{{name}}'>{{name}} </li>
+          {{/bug.cc}}
+        </ul>
+      </script>
     </section>
-  </script>
-  <script type="text/html" when="oncomments" classlist="comments">
+  </div>
+  <script type="text/html" template="comments" classlist="comments" execbefore="UI.preprocessComments()" execafter="gResolver.resolveBugs()">
     {{#comments}}
     <div tabindex="0" class="comment {{mine}} {{markdown}}">
       <p class="date">{{prettydate}}<span class="commentcounter"> - #{{counter}}</span></p>

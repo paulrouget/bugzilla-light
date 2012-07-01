@@ -1,8 +1,7 @@
 let UI = {
-  templates: new Map(),
   init: function() {
     window.onhashchange = this.handleBug.bind(this);
-    this.renderTemplateOfType("onload");
+    gKeyBindings.init();
     this.handleBug();
     if (localStorage.username) {
       this.onLoggedIn();
@@ -11,7 +10,6 @@ let UI = {
   logout: function() {
     localStorage.username = localStorage.password = null;
     document.body.classList.remove("connected");
-    this.renderTemplateOfType("onlogin");
   },
   login: function() {
     localStorage.username = $(".loginusername").value;
@@ -23,7 +21,7 @@ let UI = {
   onLoggedIn: function() {
     document.body.classList.add("connected");
     gWorld.username = localStorage.username;
-    this.renderTemplateOfType("onlogin");
+    gTemplates.render("login");
   },
 
   handleBug: function() {
@@ -32,50 +30,58 @@ let UI = {
     if (isNaN(bug)) {
       console.error("Not a bug number");
       gWorld.bug = null;
-      document.body.classList.add("nobug");
-      document.body.classList.remove("bugloaded");
-      document.body.classList.remove("bugloading");
     } else {
       gWorld.bugid = bug;
       console.log("found a bug number: " + bug);
-      document.body.classList.remove("nobug");
-      document.body.classList.remove("bugloaded");
-      document.body.classList.add("bugloading");
-      this.fetchBugAndComments(bug, function() {
-        gResolver.resolveBugs();
-        gKeyBindings.init();
-        this.buildFollowButton();
-      }.bind(this));
+      this.fetchBugAndComments(bug);
     }
-
   },
 
-  fetchBugAndComments: function(bugid, callback) {
-    document.body.classList.add("bugloading");
-    gBz.getBug(bugid, function(error, bug) {
-      document.body.classList.remove("bugloading");
+  fetchBugAndComments: function(bugid) {
+    gBz.getBug(bugid, null, function(error, bug) {
       if (error) {
         console.error("Error: didn't manage to fetch the bug.");
         return;
       }
-      document.body.classList.add("bugloaded");
       gWorld.bug = bug;
-      gWorld.originalBug = JSON.parse(JSON.stringify(bug)); // copy
-      gResolver.addDependencies();
+      gWorld.token = bug.update_token;
+
+      gTemplates.render("title");
+      gTemplates.render("h1");
+      gTemplates.render("bugzillalink");
+      gTemplates.render("status");
+      gTemplates.render("flags");
+      gTemplates.render("dependencies");
+      gTemplates.render("local");
+      gTemplates.render("affects");
+      gTemplates.render("followers");
+
       gBz.bugComments(bugid, function(error, comments) {
         if (error) {
           console.error("Error: didn't manage to fetch the comments.");
           return;
         }
-        gWorld.comments = this.preprocessComments(comments);
-        this.renderTemplateOfType("oncomments");
-        callback();
-      }.bind(this));
-      this.renderTemplateOfType("onbugmeta");
-    }.bind(this));
+        gWorld.comments = comments;
+        gTemplates.render("comments");
+      });
+    });
   },
 
-  preprocessComments: function(comments) {
+  preprocessFollowers: function() {
+    let cced = false;
+    if (gWorld.bug.cc) {
+      for (let user of gWorld.bug.cc) {
+        if (user.name == gWorld.username) {
+          cced = true;
+          break;
+        }
+      }
+    }
+    gWorld.following = cced;
+  },
+
+  preprocessComments: function() {
+    let comments = gWorld.comments;
     let counter = 0;
     for (let c of comments) {
       c.mine = (gWorld.username && (c.creator.name == gWorld.username))?"mine":"";
@@ -85,7 +91,7 @@ let UI = {
       c.formatedtext = prettytext.text;
       c.markdown = prettytext.isMarkdown ? "markdown" : "";
     }
-    return comments;
+    gWorld.comments = comments;
   },
 
   formatComment: function(text) {
@@ -111,59 +117,20 @@ let UI = {
     }
   },
 
-  renderTemplateOfType: function(type) {
-    let toExpand = $$("script[when=" + type + "]");
-    for (let s of toExpand) {
-      if (this.templates.has(s)) {
-        let elt = this.templates.get(s);
-        elt.parentNode.removeChild(elt);
-        this.templates.delete(s);
-      }
-      let tagname = s.getAttribute("tagname") || "div";
-      let node = document.createElement(tagname);
-      node.className = s.getAttribute("classlist");
-      node.innerHTML = Mustache.render(s.textContent, gWorld);
-      s.parentNode.insertBefore(node, s);
-      this.templates.set(s, node);
-    }
+  showError: function(node, msg) {
+    if (msg) node.setAttribute("error", msg);
+    node.classList.add("showerror");
+    window.setTimeout(function() {
+      node.removeAttribute("error");
+      node.classList.remove("showerror");
+    }, 1500);
   },
 
-  buildFollowButton: function() {
-    // cc'ed?
-    let cced = false;
-    if (gWorld.bug.cc) {
-      for (let user of gWorld.bug.cc) {
-        if (user.name == gWorld.username) {
-          cced = true;
-          break;
-        }
-      }
-    }
-
-    cced ? $(".meta").classList.add("cced") :
-           $(".meta").classList.remove("cced");
-
-    gBz.getUser(gWorld.username, function(error, user) {
-      if (error) {
-        console.error("Error while fetching user info");
-        return;
-      }
-      gWorld.userdef = user;
-    });
-  },
-
-  follow: function() {
-    if (gWorld.userdef) {
-      gWorld.originalBug.cc.push(gWorld.userdef.ref);
-      gBz.updateBug(gWorld.bugid, gWorld.originalBug,
-        function(error, success) {
-          if (error || !success) {
-            console.error("Error while updating cc list");
-            return;
-          }
-          $(".meta").classList.add("cced");
-      });
-    }
+  showSuccess: function(node) {
+    node.classList.add("showsuccess");
+    window.setTimeout(function() {
+      node.classList.remove("showsuccess");
+    }, 1500);
   },
 }
 

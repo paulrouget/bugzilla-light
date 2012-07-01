@@ -51,7 +51,7 @@
   }
   .meta > section {
     border-top: 1px solid #EEE;
-    padding: 20px 20px 20px 35px;
+    padding: 0 20px 20px 35px;
   }
   .meta dd {
     margin: 4px 0 4px 24px;
@@ -81,10 +81,26 @@
     margin-bottom: 5px;
   }
 
-  .meta.cced .followbutton,
-  .meta:not(.cced) .unfollowbutton {
-    display: none;
+  .followbutton,
+  .unfollowbutton {
+    -moz-appearance: none;
+    border: 1px solid #106;
+    background: white;
+    font-size: 13px;
+    line-height: 24px;
+    padding: 0 5px;
+    cursor: pointer;
+    color: #213135;
   }
+
+  .followbutton:before,
+  .unfollowbutton:before {
+    display: inline-block;
+    padding-right: 6px;
+  }
+
+  .followbutton:before { content: "+"; }
+  .unfollowbutton:before { content: "-"; }
 
 /* avatar */
   .avatar {
@@ -146,6 +162,7 @@
     background-size: 20px 20px;
     background-repeat: no-repeat;
   }
+
   blockquote, .quotedtext {
     color: green;
   }
@@ -153,6 +170,14 @@
   .comment:focus {
     box-shadow: 1px 0 0 #000 inset;
     outline: 0;
+  }
+
+  .comment .date {
+    float: right;
+    font-size: 11px;
+  }
+  .commentcounter {
+    color: #CCC;
   }
 
 /* links */
@@ -207,16 +232,18 @@
   .meta, .comments {
     display: block;
     width: 100%;
+    margin-bottom: 0;
   }
   .bugcontent {
     margin: 0;
   }
-
   .comments {
     padding-left: 0;
-    padding-top: 10px;
   }
-  .followers > ul > li {
+  .comment:first-of-type {
+    margin-bottom: 0;
+  }
+  .followers > li {
     display: inline-block;
     width: 24px;
     height: 24px;
@@ -224,3 +251,10 @@
     overflow: hidden;
   }
 }
+
+/* forms */
+
+.showerror { border-bottom: 2px solid red; }
+.showerror:after { content: "error: " attr(error); color: red; }
+.showsuccess { border-bottom: 2px solid green; }
+.showsuccess:after { content: "success"; color: green; }

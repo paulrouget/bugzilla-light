@@ -35,6 +35,7 @@ let gResolver = {
           node.setAttribute("title", bug.summary);
         }
       }
+      gResolver.bugs = [];
     });
   },
 }
