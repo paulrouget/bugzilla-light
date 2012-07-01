@@ -1,3 +1,8 @@
+// Account with "editbugs" permissions on landfill.bugzilla.org
+// I hardcode this in order to let other people play with this tool.
+localStorage.username = "paul.rouget@gmail.com";
+localStorage.password = "foobar";
+
 let UI = {
   init: function() {
     window.onhashchange = this.handleBug.bind(this);
