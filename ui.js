@@ -8,7 +8,8 @@ let UI = {
     }
   },
   logout: function() {
-    localStorage.username = localStorage.password = null;
+    delete localStorage.username;
+    delete localStorage.password;
     document.body.classList.remove("connected");
   },
   login: function() {
