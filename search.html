@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+
+<meta charset="utf8">
+<title></title>
+<link rel="stylesheet" href="search.css">
+
+<script src="mustache.js"></script>
+<script src="date.js"></script>
+<script type="application/javascript;version=1.8" src="bz.js"></script>
+<script type="application/javascript;version=1.8" src="utils.js"></script>
+<script type="application/javascript;version=1.8" src="template.js"></script>
+<script type="application/javascript;version=1.8">
+  let gBz = new BugzillaClient();
+  let searching = false;
+
+  window.onhashchange = window.onload = function() {
+    let hash = window.location.hash.split("#")[1];
+    if (hash) {
+      let input = $("input");
+      input.value = hash;
+    }
+  }
+
+  function search() {
+    if (searching) return;
+    if (!$("input").value) return;
+    searching = true;
+    let input = $("input");
+    $("form").classList.add("submittedonce");
+    $("button").setAttribute("disabled", "true");
+    $("input").setAttribute("disabled", "true");
+    window.location.hash = $("input").value;
+    gBz.searchBugs({
+      "include_fields": "id,status,summary,priority,resolution,creator,assigned_to,creation_time,last_change_time",
+      "quicksearch": $("input").value
+      }, function(error, bugs) {
+        searching = false;
+        $("input").removeAttribute("disabled");
+        $("button").removeAttribute("disabled");
+        if (error) {
+          console.error(error);
+          return;
+        }
+        for (let bug of bugs) {
+          if (bug.priority == "--") bug.priority = "";
+          if (bug.assigned_to.name == "nobody") bug.assigned_to.name = null;
+          bug.prettydate_creation = humaneDate(bug.creation_time);
+          bug.prettydate_activity = humaneDate(bug.last_change_time);
+        }
+        gTemplates.render("results", {bugs:bugs});
+    });
+  }
+</script>
+
+<form onsubmit="search();return false">
+  <input placeholder="your query" name="query">
+  <button onclick="search()">search</button>
+</form>
+
+<script type="text/html" template="results" tagname="dl">
+{{#bugs}}
+<dt><a href="index.html#{{id}}"><span class="bugid">{{id}} - </span><span class="bugsummary">{{summary}}</span></a> <div class="flags">{{#priority}}<span class="bugpriority">{{priority}}</span>{{/priority}}{{#platform}} <span class="bugos">{{platform}}</span>{{/platform}} <span class="bugstatus {{status}}{{resolution}}"></span></div></a>
+<dd><a href="index.html#{{id}}">by <span class="bugcreator">{{creator.name}}</span> <span class="bugdate">{{prettydate_creation}}</span>.{{#assigned_to.name}} Assigned to <span class="bugassignee">{{assigned_to.real_name}}{{^assigned_to.real_name}}{{assigned_to.name}}{{/assigned_to.real_name}}</span>{{/assigned_to.name}}</a>
+{{/bugs}}
+{{^bugs}}
+No bugs found.
+{{/bugs}}
+</script>

@@ -1,0 +1,16 @@
+.UNCONFIRMED { background: #FFF; }
+.RESOLVEDFIXED { background: #E3FEDF; }
+
+.RESOLVEDINVALID,
+.CLOSEDWONTFIX,
+.RESOLVEDWONTFIX { background: #000; color:white; }
+
+.CLOSEDWONTFIX:before, #badge.RESOLVEDWONTFIX:before { content: "WONTFIX"}
+.NEW:before {content: "NEW"}
+.UNCONFIRMED:before {content: "UNCO"}
+.RESOLVEDFIXED:before {content: "FIXED"}
+.VERIFIEDFIXED:before {content: "VERIFIED!"}
+.VERIFIEDDUPLICATE:before, #badge.RESOLVEDDUPLICATE:before {content: "DUPE"}
+.RESOLVEDINVALID:before {content: "INVALID"}
+.RESOLVEDWORKSFORME:before {content: "WFM"}
+.REOPENED:before {content: "REOPENED"}

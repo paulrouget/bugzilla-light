@@ -44,9 +44,10 @@
   </script>
 </header>
 
+<script type="text/html" template="h1" tagname="h1"><span class="{{bug.status}}{{bug.resolution}}" id="badge"></span>{{#bug.alias}}{{bug.alias}} | {{/bug.alias}}Bug {{bug.id}} - {{bug.summary}}</script>
+
 <section class="bugcontent">
   <div class="meta">
-    <script type="text/html" template="h1" tagname="h1">{{#bug.alias}}{{bug.alias}} | {{/bug.alias}}Bug {{bug.id}} - {{bug.summary}}</script>
     <section>
       <p class="caption">Status:</p>
       <script type="text/html" template="status">
@@ -55,9 +56,9 @@
           <dl>
             <dd class="editable">{{bug.status}} {{bug.resolution}}
             <dt>Written by:
-            <dd class="avatar" style="background-image:url(http://avatars.io/email/{{bug.creator.name}})">{{bug.creator.real_name}}{{^bug.creator.real_name}}{{bug.creator.name}}{{/bug.creator.real_name}}
+            <dd class="avatar" style="background-image:url(http://avatars.io/auto/{{bug.creator.name}})">{{bug.creator.real_name}}{{^bug.creator.real_name}}{{bug.creator.name}}{{/bug.creator.real_name}}
             <dt>Assigned to:
-            <dd class="editable avatar" style="background-image:url(http://avatars.io/email/{{bug.assigned_to.name}})">{{bug.assigned_to.real_name}}{{^bug.assigned_to.real_name}}{{bug.assigned_to.name}}{{/bug.assigned_to.real_name}}
+            <dd class="editable avatar" style="background-image:url(http://avatars.io/auto/{{bug.assigned_to.name}})">{{bug.assigned_to.real_name}}{{^bug.assigned_to.real_name}}{{bug.assigned_to.name}}{{/bug.assigned_to.real_name}}
             <dt>whiteboard:
             <dd><input name="whiteboard" value="{{bug.whiteboard}}">
             <dt>QA Contact:
@@ -133,7 +134,7 @@
         {{/following}}
         <ul class="followers">
           {{#bug.cc}}
-          <li class="avatar" style="background-image:url(http://avatars.io/email/{{name}})" title='{{name}}'>{{name}} </li>
+          <li class="avatar" style="background-image:url(http://avatars.io/auto/{{name}})" title='{{name}}'>{{name}} </li>
           {{/bug.cc}}
         </ul>
       </script>
@@ -143,7 +144,7 @@
     {{#comments}}
     <div tabindex="0" class="comment {{mine}} {{markdown}}">
       <p class="date">{{prettydate}}<span class="commentcounter"> - #{{counter}}</span></p>
-      <p style="background-image: url(http://avatars.io/email/{{creator.name}})" class="author avatar">{{creator.name}}</p>
+      <p style="background-image: url(http://avatars.io/auto/{{creator.name}})" class="author avatar">{{creator.name}}</p>
       <pre class="message">{{{formatedtext}}}</pre>
     </div>
     {{/comments}}
